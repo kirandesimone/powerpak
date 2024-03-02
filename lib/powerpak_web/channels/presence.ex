@@ -28,7 +28,7 @@ defmodule PowerpakWeb.Presence do
       |> Accounts.get_users_map()
       |> Enum.into(%{})
 
-    for {key, %{metas: [meta | metas]}} <- presences, into: %{} do
+    for {key, %{metas: metas}} <- presences, into: %{} do
       {key, %{metas: metas, user: users[key]}}
     end
   end
@@ -101,6 +101,7 @@ defmodule PowerpakWeb.Presence do
                 <%= @presences[id].username %>
               </div>
             </div>
+          </li>
         <% end %>
       </ul>
       <%= if @total_count > @count do %>
