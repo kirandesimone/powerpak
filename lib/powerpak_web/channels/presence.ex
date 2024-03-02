@@ -95,7 +95,7 @@ defmodule PowerpakWeb.Presence do
         class="grid grid-cols-1 gap-4 sm:gap-4 sm:grid-cols-2 xl:grid-cols-5 mt-3"
       >
         <%= for {id, _time} <- Enum.sort(@presence_ids, fn {_, t1}, {_, t2} -> t1 < t2 end) do %>
-          <li id={"presence-#{@presences[id].id}"}>
+          <li id={"presence-#{@presences[id].id}"} class="relative col-span-1 flex shadow-sm rounded-md overflow-hidden">
             <div class="flex-1 flex items-center justify-between text-gray-900 text-sm font-medium hover:text-gray-600 pl-3">
               <div class="flex-1 py-1 text-sm truncate">
                 <%= @presences[id].username %>
