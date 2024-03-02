@@ -3,7 +3,7 @@ import Config
 # Configure your database
 config :powerpak, Powerpak.Repo,
   username: "postgres",
-  password: "postgres",
+  password: "postgres1",
   hostname: "localhost",
   database: "powerpak_dev",
   stacktrace: true,
