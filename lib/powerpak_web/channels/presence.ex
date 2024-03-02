@@ -10,6 +10,10 @@ defmodule PowerpakWeb.Presence do
     pubsub_server: Powerpak.PubSub,
     presence: __MODULE__
 
+  use PowerpakWeb, :html
+
+  alias Powerpak.Accounts
+
   @pubsub PowerPak.PubSub
 
 
@@ -18,15 +22,23 @@ defmodule PowerpakWeb.Presence do
   end
 
   def fetch(_topic, presences) do
+    users =
+      presences
+      |> Map.keys()
+      |> Accounts.get_users_map()
+      |> Enum.into(%{})
 
+    for {key, %{metas: [meta | metas]}} <- presences, into: %{} do
+      {key, %{metas: metas, user: users[key]}}
+    end
   end
 
 
   def handle_metas(topic, %{joins: joins, leaves: leaves}, presences, state) do
     for {user_id, presence} <- joins do
-      user_data = %{id: user_id, user: presence.user, metas: Map.fetch!(presences, user_id)}
+      user_data = %{user: presence.user, metas: Map.fetch!(presences, user_id)}
       msg = {__MODULE__, {:joined, user_data}}
-      Phoenix.PubSub.local_broadcast(@pubsub, topic(topic), msg)
+      Phoenix.PubSub.local_broadcast(@pubsub, topic, msg)
     end
 
     for {user_id, presence} <- leaves do
@@ -36,27 +48,67 @@ defmodule PowerpakWeb.Presence do
           :error -> []
         end
 
-      user_data = %{id: user_id, user: presence.user, metas: metas}
+      user_data = %{user: presence.user, metas: metas}
       msg = {__MODULE__, {:left, user_data}}
-      Phoenix.PubSub.local_broadcast(@pubsub, topic(topic), msg)
+      Phoenix.PubSub.local_broadcast(@pubsub, topic, msg)
     end
 
     {:ok, state}
   end
 
-  def track_game_user(topic, current_user_id) do
+  def track_game_user(game_id, current_user_id) do
     track(
       self(),
-      topic(topic),
+      topic(game_id),
       current_user_id,
       %{}
     )
   end
 
-  def untrack_game_user() do
-
+  def untrack_game_user(game_id, current_user_id) do
+    untrack(
+      self(),
+      topic(game_id),
+      current_user_id
+    )
   end
 
+  def subscribe(game_id), do: Phoenix.PubSub.subscribe(@pubsub, topic(game_id))
 
-  defp topic(name), do: "proxy:#{name}"
+  def connected_users(assigns) do
+    count = Enum.count(assigns.presence_ids)
+
+    assigns =
+      assigns
+      |> assign(:count, count)
+      |> assign(:total_count, fn -> count end)
+
+    ~H"""
+    <div>
+      <h2 class="text-gray-500 text-xs font-medium uppercase tracking-wide">
+        Connected Users (<%= @count %>)
+      </h2>
+      <ul
+        id="connected-users"
+        role="list"
+        x-max="1"
+        class="grid grid-cols-1 gap-4 sm:gap-4 sm:grid-cols-2 xl:grid-cols-5 mt-3"
+      >
+        <%= for {id, _time} <- Enum.sort(@presence_ids, fn {_, t1}, {_, t2} -> t1 < t2 end) do %>
+          <li id={"presence-#{@presences[id].id}"}>
+            <div class="flex-1 flex items-center justify-between text-gray-900 text-sm font-medium hover:text-gray-600 pl-3">
+              <div class="flex-1 py-1 text-sm truncate">
+                <%= @presences[id].username %>
+              </div>
+            </div>
+        <% end %>
+      </ul>
+      <%= if @total_count > @count do %>
+        <p> + <%= @total_count - @count %> more </p>
+      <% end %>
+    </div>
+    """
+  end
+
+  defp topic(game_id), do: "proxy:active_players:#{game_id}}"
 end

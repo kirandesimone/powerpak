@@ -8,6 +8,11 @@ defmodule Powerpak.Accounts do
 
   alias Powerpak.Accounts.{User, UserToken, UserNotifier}
 
+
+  def get_users_map(user_ids) do
+    Repo.all(from u in Users, where: u.id in ^user_ids, select: {u.id, u})
+  end
+
   ## Database getters
 
   @doc """
