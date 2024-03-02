@@ -14,6 +14,8 @@ defmodule Powerpak.Application do
       {Phoenix.PubSub, name: Powerpak.PubSub},
       # Start the Finch HTTP client for sending emails
       {Finch, name: Powerpak.Finch},
+      # Track user presences
+      PowerpakWeb.Presence,
       # Start a worker by calling: Powerpak.Worker.start_link(arg)
       # {Powerpak.Worker, arg},
       # Start to serve requests, typically the last entry
