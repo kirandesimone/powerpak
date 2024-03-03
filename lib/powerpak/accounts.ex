@@ -8,10 +8,18 @@ defmodule Powerpak.Accounts do
 
   alias Powerpak.Accounts.{User, UserToken, UserNotifier}
 
+  @pubsub Powerpak.PubSub
+
+
+  def subscribe(game_id) do
+    Phoenix.PubSub.subscribe(@pubsub, topic(game_id))
+  end
 
   def get_users_map(user_ids) do
-    Repo.all(from u in Users, where: u.id in ^user_ids, select: {u.id, u})
+    Repo.all(from u in User, where: u.id in ^user_ids, select: {u.id, u})
   end
+
+  defp topic(game_id), do: "game:#{game_id}"
 
   ## Database getters
 

@@ -1,0 +1,21 @@
+<div id="blah">
+    <.link patch={~p"/main-menu/loading"}>
+        <.button> Play! </.button>
+    </.link>
+
+    <.modal 
+    :if={@live_action in [:load]} 
+    id="load-game-modal" 
+    show 
+    on_cancel={JS.patch(~p"/main-menu")}
+    >
+        <.live_component
+            module={PowerpakWeb.MainMenuLive.Load}
+            id={:load}
+            title={@page_title}
+            action={@live_action}
+            patch={~p"/main-menu"}
+            state={:loading}
+        />
+    </.modal>
+</div>

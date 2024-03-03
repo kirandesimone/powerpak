@@ -56,6 +56,7 @@ defmodule PowerpakWeb.Router do
       live "/users/log_in", UserLoginLive, :new
       live "/users/reset_password", UserForgotPasswordLive, :new
       live "/users/reset_password/:token", UserResetPasswordLive, :edit
+
     end
 
     post "/users/log_in", UserSessionController, :create
@@ -68,6 +69,10 @@ defmodule PowerpakWeb.Router do
       on_mount: [{PowerpakWeb.UserAuth, :ensure_authenticated}] do
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
+
+      live "/main-menu", MainMenuLive.Index, :index
+      live "/main-menu/loading", MainMenuLive.Index, :load
+      live "/game/:id", GameLive.Index
     end
   end
 

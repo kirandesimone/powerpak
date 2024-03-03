@@ -12,9 +12,10 @@ defmodule PowerpakWeb.Presence do
 
   use PowerpakWeb, :html
 
+  alias Powerpak.Games.Game
   alias Powerpak.Accounts
 
-  @pubsub PowerPak.PubSub
+  @pubsub Powerpak.PubSub
 
 
   def init(_opts) do
@@ -28,13 +29,14 @@ defmodule PowerpakWeb.Presence do
       |> Accounts.get_users_map()
       |> Enum.into(%{})
 
-    for {key, %{metas: [meta | metas]}} <- presences, into: %{} do
-      {key, %{metas: metas, user: users[key]}}
+    for {key, %{metas: metas}} <- presences, into: %{} do
+      {key, %{metas: metas, user: users[String.to_integer(key)]}}
     end
   end
 
 
   def handle_metas(topic, %{joins: joins, leaves: leaves}, presences, state) do
+    IO.inspect(joins)
     for {user_id, presence} <- joins do
       user_data = %{user: presence.user, metas: Map.fetch!(presences, user_id)}
       msg = {__MODULE__, {:joined, user_data}}
@@ -75,6 +77,10 @@ defmodule PowerpakWeb.Presence do
 
   def subscribe(game_id), do: Phoenix.PubSub.subscribe(@pubsub, topic(game_id))
 
+  def list_game_presences(%Game{} = game) do
+    list(topic(game.id))
+  end
+
   def connected_users(assigns) do
     count = Enum.count(assigns.presence_ids)
 
@@ -101,10 +107,11 @@ defmodule PowerpakWeb.Presence do
                 <%= @presences[id].username %>
               </div>
             </div>
+          </li>
         <% end %>
       </ul>
       <%= if @total_count > @count do %>
-        <p> + <%= @total_count - @count %> more </p>
+        <p> + more </p>
       <% end %>
     </div>
     """

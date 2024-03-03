@@ -534,7 +534,7 @@ defmodule PowerpakWeb.CoreComponents do
     attr :title, :string, required: true
   end
 
-  def list(assigns) do
+  def list_items(assigns) do
     ~H"""
     <div class="mt-14">
       <dl class="-my-4 divide-y divide-zinc-100">
