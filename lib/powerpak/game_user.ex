@@ -3,8 +3,8 @@ defmodule Powerpak.GameUser do
   import Ecto.Changeset
 
   schema "games_users" do
-    belongs_to :users, Powerpak.Accounts
-    belongs_to :games, Powerpak.Games
+    belongs_to :users, Powerpak.Accounts.User
+    belongs_to :games, Powerpak.Games.Game
 
     timestamps(type: :utc_datetime)
   end

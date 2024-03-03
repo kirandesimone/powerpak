@@ -6,10 +6,11 @@ defmodule PowerpakWeb.GameLive.Index do
 
   @max_presences 2
 
+  @impl true
   def mount(%{"id" => game_id}, _session, socket) do
     %{current_user: current_user} = socket.assigns
 
-    IO.inspect(socket)
+    IO.inspect(current_user)
     game = Games.get_game!(game_id)
 
     socket =
@@ -25,6 +26,11 @@ defmodule PowerpakWeb.GameLive.Index do
     {:ok, socket}
   end
 
+  def handle_info(%Phoenix.Socket.Broadcast{topic: _topic, event: _event, payload: _payload}, socket) do
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_info({PowerpakWeb.Presence, {:joined, joins}}, socket) do
     socket =
       socket
@@ -33,6 +39,7 @@ defmodule PowerpakWeb.GameLive.Index do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_info({PowerpakWeb.Presence, {:left, leaves}}, socket) do
     %{user: user} = leaves
 

@@ -30,12 +30,13 @@ defmodule PowerpakWeb.Presence do
       |> Enum.into(%{})
 
     for {key, %{metas: metas}} <- presences, into: %{} do
-      {key, %{metas: metas, user: users[key]}}
+      {key, %{metas: metas, user: users[String.to_integer(key)]}}
     end
   end
 
 
   def handle_metas(topic, %{joins: joins, leaves: leaves}, presences, state) do
+    IO.inspect(joins)
     for {user_id, presence} <- joins do
       user_data = %{user: presence.user, metas: Map.fetch!(presences, user_id)}
       msg = {__MODULE__, {:joined, user_data}}
