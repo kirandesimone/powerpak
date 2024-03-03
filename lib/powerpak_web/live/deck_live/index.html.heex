@@ -1,0 +1,16 @@
+<div>
+<.link patch={~p"/deck/new"}>
+    Create Deck
+</.link>
+
+<.modal :if={@live_action in [:new, :edit]} id="deck-modal" show on_cancel={JS.patch(~p"/deck")}>
+    <.live_component
+        module={PowerpakWeb.DeckLive.DeckBuilder}
+        id={@deck[:id] || :new}
+        title={@page_title}
+        action={@live_action}
+        deck={@new_deck}
+        patch={~p"/deck"}
+    />
+</.modal>
+</div>

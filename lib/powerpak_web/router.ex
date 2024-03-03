@@ -73,6 +73,9 @@ defmodule PowerpakWeb.Router do
       live "/main-menu", MainMenuLive.Index, :index
       live "/main-menu/loading", MainMenuLive.Index, :load
       live "/game/:id", GameLive.Index
+      live "/deck", DeckLive.Index, :index
+      live "/deck/new", DeckLive.Index, :new
+      live "/deck/edit", DeckLive.Index, :edit
     end
   end
 
