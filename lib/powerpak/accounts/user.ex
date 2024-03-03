@@ -8,7 +8,8 @@ defmodule Powerpak.Accounts.User do
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
     field :confirmed_at, :naive_datetime
-    # many_to_many :games, Powerpak.Games, join_through: Powerpak.GameUser
+
+    has_one :deck, Powerpak.Decks.Deck
 
     timestamps(type: :utc_datetime)
   end
@@ -41,6 +42,7 @@ defmodule Powerpak.Accounts.User do
     |> cast(attrs, [:username, :email, :password])
     |> validate_email(opts)
     |> validate_password(opts)
+    |> cast_assoc(:deck)
   end
 
   defp validate_email(changeset, opts) do

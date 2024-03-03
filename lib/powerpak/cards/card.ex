@@ -13,7 +13,7 @@ defmodule Powerpak.Cards.Card do
   end
 
   @doc false
-  def changeset(card, attrs) do
+  def changeset(card, attrs \\ %{}) do
     card
     |> cast(attrs, [:name, :cost, :ability, :power, :img])
     |> validate_required([:name, :cost, :ability, :power, :img])

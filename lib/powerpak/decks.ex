@@ -18,7 +18,7 @@ defmodule Powerpak.Decks do
 
   """
   def list_decks do
-    Repo.all(Deck)
+    Repo.all(Deck) |> Repo.preload([:user])
   end
 
   @doc """
@@ -36,6 +36,16 @@ defmodule Powerpak.Decks do
 
   """
   def get_deck!(id), do: Repo.get!(Deck, id)
+
+  def get_deck_by_user_id(user_id) do
+    query =
+      from d in Deck,
+      join: u in assoc(d, :user),
+      where: u.id == ^user_id,
+      preload: [user: u]
+
+    Repo.get_by(query, %{})
+  end
 
   @doc """
   Creates a deck.
