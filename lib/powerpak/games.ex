@@ -8,6 +8,22 @@ defmodule Powerpak.Games do
 
   alias Powerpak.Games.Game
 
+
+  @doc """
+  Returns a game in the loading state
+  This means that a game has been created but only has
+  one player in it
+
+  loading state == 1
+  """
+  def get_loading_game do
+    query =
+      from g in Game,
+      where: g.state == :loading,
+      select: g
+
+    Repo.all(query) |> Enum.take(1)
+  end
   @doc """
   Returns the list of games.
 

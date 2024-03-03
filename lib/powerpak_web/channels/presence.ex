@@ -12,9 +12,10 @@ defmodule PowerpakWeb.Presence do
 
   use PowerpakWeb, :html
 
+  alias Powerpak.Games.Game
   alias Powerpak.Accounts
 
-  @pubsub PowerPak.PubSub
+  @pubsub Powerpak.PubSub
 
 
   def init(_opts) do
@@ -75,6 +76,10 @@ defmodule PowerpakWeb.Presence do
 
   def subscribe(game_id), do: Phoenix.PubSub.subscribe(@pubsub, topic(game_id))
 
+  def list_game_presences(%Game{} = game) do
+    list(topic(game.id))
+  end
+
   def connected_users(assigns) do
     count = Enum.count(assigns.presence_ids)
 
@@ -105,7 +110,7 @@ defmodule PowerpakWeb.Presence do
         <% end %>
       </ul>
       <%= if @total_count > @count do %>
-        <p> + <%= @total_count - @count %> more </p>
+        <p> + more </p>
       <% end %>
     </div>
     """
